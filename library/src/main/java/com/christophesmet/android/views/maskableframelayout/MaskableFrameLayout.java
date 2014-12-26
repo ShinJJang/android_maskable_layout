@@ -37,8 +37,8 @@ public class MaskableFrameLayout extends FrameLayout {
     private static final int MODE_DARKEN = 2;
     private static final int MODE_DST = 3;
     private static final int MODE_DST_ATOP = 4;
-    private static final int MODE_DST_IN = 5;
-    private static final int MODE_DST_OUT = 6;
+    public static final int MODE_DST_IN = 5;
+    public static final int MODE_DST_OUT = 6;
     private static final int MODE_DST_OVER = 7;
     private static final int MODE_LIGHTEN = 8;
     private static final int MODE_MULTIPLY = 9;
@@ -65,6 +65,7 @@ public class MaskableFrameLayout extends FrameLayout {
 
     public MaskableFrameLayout(Context context) {
         super(context);
+        construct(context, null);
     }
 
     public MaskableFrameLayout(Context context, AttributeSet attrs) {
@@ -173,6 +174,10 @@ public class MaskableFrameLayout extends FrameLayout {
         invalidate();
     }
 
+    public void setMaskMode(int mode) {
+        mPorterDuffXferMode = getModeFromInteger(mode);
+    }
+
     //Once the size has changed we need to remake the mask.
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -200,7 +205,12 @@ public class MaskableFrameLayout extends FrameLayout {
             canvas.drawBitmap(mFinalMask, 0.0f, 0.0f, mPaint);
             mPaint.setXfermode(null);
         } else {
-            log("Mask or paint is null ...");
+            if(mFinalMask == null && mPaint != null)
+                log("Mask is null ...");
+            else if(mFinalMask != null && mPaint == null)
+                log("paint is null ...");
+            else
+                log("both Mask and paint is null ...");
         }
     }
 
